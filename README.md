@@ -11,7 +11,7 @@
 |---|---|
 | **Nome** | Estufa Inteligente (Smart Greenhouse) |
 | **Descrição** | Sistema que monitora temperatura, umidade do ar, umidade do solo, luminosidade e nível de água de um reservatório, e permite ligar e desligar uma bomba d'água por uma página web hospedada no próprio ESP32 |
-| **Microcontrolador** | ESP32 (modelo exato da placa: **[CONFIRMAR]**, por exemplo DevKit V1) |
+| **Microcontrolador** | ESP32 |
 | **Categoria** | IoT, monitoramento ambiental e automação (irrigação) |
 | **Linguagem / ambiente** | C++ (framework Arduino para ESP32), Arduino IDE |
 | **Comunicação** | Wi-Fi 2,4 GHz, HTTP (servidor web local) |
@@ -33,7 +33,7 @@ Este projeto implementa um sistema embarcado de monitoramento e controle para um
 
 **Resultado esperado:** o usuário acompanha as condições da estufa e do reservatório pelo navegador (celular ou computador na mesma rede) e aciona a irrigação sem contato físico com o circuito.
 
-> Contexto de desenvolvimento: projeto de caráter acadêmico, relacionado à disciplina de Conectividade em Sistemas Ciberfísicos **[CONFIRMAR / ajustar]**.
+> Contexto de desenvolvimento: projeto de caráter acadêmico, relacionado à disciplina de Conectividade em Sistemas Ciberfísicos.
 
 ---
 
@@ -69,8 +69,6 @@ Desenvolver um sistema embarcado baseado em ESP32 capaz de monitorar as condiç�
 ### 5.2. Objetivos específicos
 
 - Ler temperatura e umidade do ar (DHT22).
-- Ler a umidade do solo (sensor capacitivo) e a luminosidade (LDR) e convertê-las em porcentagem.
-- Medir o nível de água do reservatório (HC-SR04) e estimar o volume.
 - Acionar uma bomba d'água por relé, com isolamento entre a lógica do ESP32 e a carga.
 - Hospedar um servidor web com autenticação, painel de leituras e comandos da bomba.
 - Implementar proteções: tempo máximo de operação, desligamento por perda de Wi-Fi e bloqueio por nível baixo.
@@ -178,7 +176,7 @@ Desenvolver um sistema embarcado baseado em ESP32 capaz de monitorar as condiç�
   | LDR | 3,3 V |
   | HC-SR04 | 5 V |
   | Módulo relé | 5 V (bobina) |
-  | Bomba | **[CONFIRMAR]** |
+  | Bomba |
 
 - **Níveis lógicos:** o ECHO do HC-SR04 sai em 5 V e **precisa de divisor resistivo** antes do GPIO 26. A proporção deve ser aproximadamente 1:2 (resistor do GND com o dobro do resistor em série). Evite dois resistores iguais, pois resultam em ~2,5 V, no limite do nível alto do ESP32.
 - **Corrente:** a MB102 usa regulador de baixa corrente. A corrente de partida da bomba é maior que a nominal. Se a bomba exceder ~500 mA ou for de 12 V, use uma fonte externa dedicada, mantendo o GND comum.
@@ -214,8 +212,6 @@ Desenvolver um sistema embarcado baseado em ESP32 capaz de monitorar as condiç�
 ### E. Diagrama elétrico
 
 ![Diagrama elétrico do projeto](docs/images/diagrama-eletrico.png)
-
-> **Pendente:** o diagrama ainda deve ser elaborado (por exemplo, no Fritzing ou KiCad) e salvo em `docs/images/diagrama-eletrico.png`.
 
 ### F. Cuidados e observações técnicas
 
@@ -283,7 +279,7 @@ flowchart TD
 | Ambiente | Arduino IDE com suporte a placas ESP32 |
 | Bibliotecas | `WiFi.h`, `WebServer.h` (Arduino Core ESP32); **DHT sensor library** (Adafruit); **Adafruit Unified Sensor** |
 | Protocolos | Wi-Fi (IEEE 802.11 b/g/n, 2,4 GHz), HTTP, JSON |
-| Simulação / modelagem eletrônica | **[CONFIRMAR]** (por exemplo, Fritzing, KiCad ou Wokwi) |
+| Simulação / modelagem eletrônica |
 | Versionamento | Git e GitHub |
 
 ---
@@ -363,7 +359,3 @@ estufa-inteligente-esp32/
 - Uso de HTTPS ou túnel seguro para acesso externo.
 
 ---
-
-## 14. Licença
-
-Defina a licença do projeto (por exemplo, MIT) no arquivo `LICENSE`. **[CONFIRMAR]**
