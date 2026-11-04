@@ -1,8 +1,6 @@
 # SATURN---Plant-Keeper[README.md](https://github.com/user-attachments/files/34293844/README.md)
 # Estufa Inteligente com ESP32: monitoramento e controle de irrigação via web
 
-> **Aviso sobre este documento:** itens marcados com **[CONFIRMAR]** não foram informados durante o desenvolvimento (modelos, especificações, valores de componentes). Preencha-os antes de publicar. Nenhuma credencial real (Wi-Fi ou login do painel) deve ser colocada neste repositório.
-
 ---
 
 ## 1. Identificação do projeto
@@ -38,8 +36,6 @@ Este projeto implementa um sistema embarcado de monitoramento e controle para um
 ---
 
 ## 3. Motivação e justificativa
-
-> Esta seção foi escrita a partir das funções do sistema. **Ajuste-a com a motivação real do projeto.**
 
 - **Necessidade:** acompanhar as condições de cultivo e irrigar sem depender de presença constante no local.
 - **Limitações das soluções convencionais:** a irrigação manual depende de memória e rotina do usuário. Temporizadores simples não consideram o estado real do solo nem do reservatório. Soluções comerciais prontas costumam ter custo maior e menor flexibilidade para estudo e modificação.
@@ -121,17 +117,14 @@ Desenvolver um sistema embarcado baseado em ESP32 capaz de monitorar as condiç�
 
 | Componente | Qtd. | Função no projeto | Especificações técnicas |
 |---|---|---|---|
-| ESP32 (placa de desenvolvimento) | 1 | Processamento, Wi-Fi, servidor web | Alimentação por USB (5 V); GPIOs de 3,3 V. Modelo: **[CONFIRMAR]** |
-| Sensor DHT22 (AM2302) | 1 | Temperatura e umidade do ar | Saída digital de 1 fio. Se for o componente de 4 pinos, requer pull-up (ver seção 8). Versão (módulo ou componente): **[CONFIRMAR]** |
+| ESP32 (placa de desenvolvimento) | 1 | Processamento, Wi-Fi, servidor web | Alimentação por USB (5 V); GPIOs de 3,3 V. Modelo: SP32-WROOM-32D* |
+| Sensor DHT22 (AM2302) | 1 | Temperatura e umidade do ar | Saída digital de 1 fio. Se for o componente de 4 pinos, requer pull-up (ver seção 8). |
 | Sensor capacitivo de umidade do solo V2.0.0 | 1 | Umidade do solo | Pinos GND, VCC e AOUT (saída analógica). Alimentado em 3,3 V neste projeto |
-| LDR (fotorresistor) | 1 | Luminosidade ambiente | Usado em divisor de tensão. Modelo: **[CONFIRMAR]** |
-| Resistor para o divisor do LDR | 1 | Divisor de tensão do LDR | Valor de referência: 10 kΩ. Valor utilizado: **[CONFIRMAR]** |
+| LDR (fotorresistor) | 1 | Luminosidade ambiente | Usado em divisor de tensão. Modelo: Módulo Sensor de Luminosidade Luz LDR - 3 Pinos |
 | Sensor ultrassônico HC-SR04 | 1 | Nível do reservatório | Alimentação de 5 V; sinal ECHO em 5 V (exige adaptação de nível) |
-| Resistores do divisor do ECHO | 2 | Reduzir o ECHO de 5 V para ~3,3 V | Proporção aproximada de 1:2. Valores utilizados: **[CONFIRMAR]** |
-| Módulo relé | 1 | Acionar a bomba | Módulo de 1 canal, bobina de 5 V. Lógica do sinal (ativo em LOW ou HIGH): **[CONFIRMAR]**. O código assume ativo em LOW |
+| Módulo relé | 1 | Acionar a bomba | Módulo de 1 canal, bobina de 5 V. Lógica do sinal (ativo em LOW ou HIGH): O código assume ativo em LOW |
 | Bomba d'água | 1 | Irrigação | Tensão e corrente: **[CONFIRMAR]** (a alimentação pela MB102 só é adequada para bombas pequenas de 5 V) |
-| Módulo de alimentação protoboard MB102 | 1 | Alimentação de 5 V / 3,3 V da bomba, relé e sensores | Saídas de 3,3 V ou 5 V selecionáveis. Regulador de baixa corrente (referência: ~700 mA). Entrada de fonte externa: **[CONFIRMAR]** |
-| Diodo 1N4007 | 1 | Proteção contra pico de tensão da bomba (flyback) | Recomendado, em paralelo com a bomba, cátodo no positivo. Uso na montagem: **[CONFIRMAR]** |
+| Módulo de alimentação protoboard MB102 | 1 | Alimentação de 5 V / 3,3 V da bomba, relé e sensores | Saídas de 3,3 V ou 5 V selecionáveis. Regulador de baixa corrente (referência: ~700 mA). |
 | Protoboard e jumpers | — | Montagem | — |
 | Reservatório de água | 1 | Armazenamento | Dimensões e capacidade: **[CONFIRMAR]** (usadas na calibração) |
 
@@ -162,7 +155,6 @@ Desenvolver um sistema embarcado baseado em ESP32 capaz de monitorar as condiç�
 | 5V (MB102 ou VIN) | Módulo relé, HC-SR04 | VCC | Alimentação | Energia do relé e do HC-SR04 |
 | GND | Todos os componentes | GND | Terra | Referência elétrica comum |
 
-> Os GPIOs 25 e 26 constam no código atual. Confirme-os na montagem física. O pino de alimentação do DHT22 (3,3 V ou 5 V) também deve ser **[CONFIRMAR]**.
 
 ### C. Alimentação e requisitos elétricos
 
@@ -319,7 +311,6 @@ estufa-inteligente-esp32/
    const char* WEB_SENHA   = "SENHA_DO_PAINEL";
    ```
 
-   > **Importante:** não faça commit de senhas reais. Mantenha-as em um arquivo separado (`secrets.h`) listado no `.gitignore`.
 4. Selecione a placa (ESP32 Dev Module) e a porta, e grave o código.
 5. Abra o Monitor Serial a **115200 baud**, aguarde o IP e acesse `http://<IP>` em um dispositivo na **mesma rede**.
 
