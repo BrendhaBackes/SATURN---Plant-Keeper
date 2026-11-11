@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SATURN – Plant Keeper</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; background: #111; color: #eee; padding: 25px; }
+    h1 { font-size: 1.5em; }
+    .config { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    .config input { padding: 10px; border-radius: 8px; border: 1px solid #333; background: #1e1e1e; color: #eee; width: 140px; }
+    .config button { font-size: 1em; padding: 10px 18px; border: none; border-radius: 8px; background: #1565c0; color: #fff; cursor: pointer; }
+    #conexao { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.9em; margin: 8px 0; background: #333; }
+    #conexao.ok   { background: #1b5e20; }
+    #conexao.erro { background: #b71c1c; }
+    #info { color: #999; font-size: 0.85em; margin: 4px 0; min-height: 1.2em; }
+    .cards { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 20px 0; }
+    .card { background: #1e1e1e; border-radius: 14px; padding: 18px 28px; min-width: 130px; }
+    .valor { font-size: 2.2em; font-weight: bold; }
+    .sub { font-size: 0.85em; color: #888; margin-top: 4px; }
+    .rotulo { font-size: 0.9em; color: #aaa; }
+    #estado { font-size: 2em; margin: 20px 0; font-weight: bold; }
+    .on  { color: #3ddc84; }
+    .off { color: #ff5252; }
+    button.acao { font-size: 1.4em; padding: 18px 40px; margin: 10px; border: none;
+                  border-radius: 12px; color: #fff; cursor: pointer; }
+    #btnLigar    { background: #2e7d32; }
+    #btnDesligar { background: #c62828; }
+    #aviso { color: #ffb300; min-height: 1.4em; }
+
+    /* ---- Log do sistema ---- */
+    #logBox { max-width: 900px; margin: 30px auto 0; text-align: left; }
+    #logBox h2 { text-align: center; }
+    .logBarra { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; align-items: center; margin-bottom: 10px; }
+    .logBarra button, .logBarra select { padding: 8px 14px; border-radius: 8px; border: 1px solid #333; background: #1e1e1e; color: #eee; cursor: pointer; font-size: 0.9em; }
+    .logBarra button.ativo { background: #1565c0; border-color: #1565c0; }
+    .logBarra button.perigo { background: #7f1d1d; border-color: #7f1d1d; }
+    #logResumo { text-align: center; color: #888; font-size: 0.85em; margin-bottom: 8px; }
+    .logScroll { max-height: 360px; overflow: auto; border-radius: 10px; background: #1a1a1a; }
+    table.log { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+    table.log th { position: sticky; top: 0; background: #262626; text-align: left; padding: 8px 10px; }
+    table.log td { padding: 6px 10px; border-top: 1px solid #262626; vertical-align: top; }
+    td.hora { white-space: nowrap; color: #aaa; }
+    .nivel { display: inline-block; min-width: 56px; text-align: center; padding: 2px 8px; border-radius: 10px; font-weight: bold; font-size: 0.8em; }
+    .nivel.INFO  { background: #0d47a1; }
+    .nivel.AVISO { background: #ef6c00; }
+    .nivel.ERRO  { background: #b71c1c; }
+  </style>
+</head>
+<body>
+  <h1>SATURN – Plant Keeper</h1>
+
+  <!-- Configuração de acesso ao ESP32 (salva no navegador) -->
+  <div class="config">
+    <input id="ip" placeholder="IP do ESP32 (ex.: 192.168.0.50)">
+    <input id="usuario" placeholder="Usuário">
+    <input id="senha" type="password" placeholder="Senha">
+    <button id="btnSalvar">Conectar</button>
+  </div>
+  <div id="conexao">Desconectado</div>
+  <div id="info"></div>
+
+  <div class="cards">
+    <div class="card"><div class="rotulo">Temperatura</div><div class="valor" id="temp">--</div></div>
+    <div class="card"><div class="rotulo">Umidade do ar</div><div class="valor" id="umid">--</div></div>
+    <div class="card"><div class="rotulo">Umidade do solo</div><div class="valor" id="solo">--</div><div class="sub" id="soloRaw"></div></div>
+    <div class="card"><div class="rotulo">Luminosidade</div><div class="valor" id="luz">--</div><div class="sub" id="luzRaw"></div></div>
+    <div class="card"><div class="rotulo">Reservatório</div><div class="valor" id="res">--</div><div class="sub" id="resMl"></div><div class="sub" id="resDist"></div></div>
+  </div>
+
+  <h2>Bomba d'água</h2>
+  <div id="estado">...</div>
+  <div id="aviso"></div>
+  <button class="acao" id="btnLigar">LIGAR</button>
+  <button class="acao" id="btnDesligar">DESLIGAR</button>
+
+  <!-- Log do sistema (lido do arquivo salvo na flash do ESP32) -->
+  <div id="logBox">
+    <h2>Log do sistema</h2>
+    <div class="logBarra">
+      <button data-nivel="" class="ativo">Todos</button>
+      <button data-nivel="ERRO">Erros</button>
+      <button data-nivel="AVISO">Avisos</button>
+      <button data-nivel="INFO">Informações</button>
+      <select id="logQtd">
+        <option value="50">Últimos 50</option>
+        <option value="200" selected>Últimos 200</option>
+        <option value="1000">Últimos 1000</option>
+      </select>
+      <button id="btnLogAtualizar">Atualizar</button>
+      <button id="btnLogBaixar">Baixar .txt</button>
+      <button id="btnLogLimpar" class="perigo">Limpar log</button>
+    </div>
+    <div id="logResumo"></div>
+    <div class="logScroll">
+      <table class="log">
+        <thead><tr><th>Data e hora</th><th>Nível</th><th>Mensagem</th></tr></thead>
+        <tbody id="logCorpo"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

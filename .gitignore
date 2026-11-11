@@ -1,0 +1,14 @@
+# Credenciais (Wi-Fi e login da API): NUNCA enviar ao GitHub
+secrets.h
+**/secrets.h
+
+# Arduino / PlatformIO
+.pio/
+.vscode/
+build/
+*.bin
+*.elf
+
+# Sistema
+.DS_Store
+Thumbs.db
